@@ -1,0 +1,258 @@
+import requests
+import pandas as pd
+from datetime import datetime
+import time
+import json
+from io import StringIO
+
+
+print("Hello!")
+
+# API Keys provided by PurpleAir(c)
+key_read = "D80F3AFD-DDAD-11ED-BD21-42010A800008"
+
+# Sleep Seconds
+sleep_seconds = 3  # wait sleep_seconds after each query
+
+
+def get_sensorslist(nwlng, nwlat, selng, selat, location, key_read):
+    # PurpleAir API URL
+    root_url = "https://api.purpleair.com/v1/sensors/"
+
+    # Box domain: lat_lon = [nwlng,, nwlat, selng, selat]
+    lat_lon = [nwlng, nwlat, selng, selat]
+    for i, l in enumerate(lat_lon):
+        if i == 0:
+            ll_api_url = f"&nwlng={l}"
+        elif i == 1:
+            ll_api_url += f"&nwlat={l}"
+        elif i == 2:
+            ll_api_url += f"&selng={l}"
+        elif i == 3:
+            ll_api_url += f"&selat={l}"
+
+    # Fields to get
+    fields_list = ["sensor_index", "name", "latitude", "longitude", "location_type"]
+    for i, f in enumerate(fields_list):
+        if i == 0:
+            fields_api_url = f"&fields={f}"
+        else:
+            fields_api_url += f"%2C{f}"
+
+    # Indoor, outdoor or all
+    if location == "indoor":
+        loc_api = f"&location_type=1"
+    elif location == "outdoor":
+        loc_api = f"&location_type=0"
+    else:
+        loc_api = ""
+
+    # Final API URL
+    api_url = root_url + f"?api_key={key_read}" + fields_api_url + ll_api_url + loc_api
+
+    # Getting data
+    response = requests.get(api_url)
+
+    if response.status_code == 200:
+        # print(response.text)
+        json_data = json.loads(response.content)["data"]
+        df = pd.DataFrame.from_records(json_data)
+        df.columns = fields_list
+    else:
+        raise requests.exceptions.RequestException
+
+    # Creating a PurpleAir monitors table in PostgreSQL (Optional)
+    # df.to_sql('tablename', con=engine, if_exists='append', index=False)
+
+    # writing to csv file
+    folderpath = "D:\\UTS"
+    filename = folderpath + "\sensors_list.csv"
+    df.to_csv(filename, index=False, header=True)
+
+    # Creating a Sensors
+    sensorslist = list(df.sensor_index)
+
+    return sensorslist
+
+
+def get_historicaldata(sensors_list, bdate, edate, average_time, key_read):
+    # Historical API URL
+    root_api_url = "https://api.purpleair.com/v1/sensors/"
+
+    # Average time: The desired average in minutes, one of the following:0 (real-time),10 (default if not specified),30,60
+    average_api = f"&average={average_time}"
+
+    # Creating fields api url from fields list to download the data: Note: Sensor ID/Index will not be downloaded as default
+    fields_list = [
+        "humidity",
+        "humidity_a",
+        "humidity_b",
+        "temperature",
+        "temperature_a",
+        "temperature_b",
+        "pressure",
+        "pressure_a",
+        "pressure_b",
+        "pm1.0_atm",
+        "pm1.0_atm_a",
+        "pm1.0_atm_b",
+        "pm1.0_cf_1",
+        "pm1.0_cf_1_a",
+        "pm1.0_cf_1_b",
+        "pm2.5_alt",
+        "pm2.5_alt_a",
+        "pm2.5_alt_b",
+        "pm2.5_atm",
+        "pm2.5_atm_a",
+        "pm2.5_atm_b",
+        "pm2.5_cf_1",
+        "pm2.5_cf_1_a",
+        "pm2.5_cf_1_b",
+        "pm10.0_atm",
+        "pm10.0_atm_a",
+        "pm10.0_atm_b",
+        "pm10.0_cf_1",
+        "pm10.0_cf_1_a",
+        "pm10.0_cf_1_b",
+        "0.3_um_count",
+        "0.3_um_count_a",
+        "0.3_um_count_b",
+        "0.5_um_count",
+        "0.5_um_count_a",
+        "0.5_um_count_b",
+        "1.0_um_count",
+        "1.0_um_count_a",
+        "1.0_um_count_b",
+        "2.5_um_count",
+        "2.5_um_count_a",
+        "2.5_um_count_b",
+        "5.0_um_count",
+        "5.0_um_count_a",
+        "5.0_um_count_b",
+        "10.0_um_count",
+        "10.0_um_count_a",
+        "10.0_um_count_b",
+        "scattering_coefficient",
+        "scattering_coefficient_a",
+        "scattering_coefficient_b",
+        "deciviews",
+        "deciviews_a",
+        "deciviews_b",
+        "visual_range",
+        "visual_range_a",
+        "visual_range_b",
+    ]
+    for i, f in enumerate(fields_list):
+        if i == 0:
+            fields_api_url = f"&fields={f}"
+        else:
+            fields_api_url += f"%2C{f}"
+
+    # Dates of Historical Data period
+    begindate = datetime.strptime(bdate, "%m-%d-%Y")
+    enddate = datetime.strptime(edate, "%m-%d-%Y")
+    # Downlaod days based on average
+    if average_time == 60:
+        date_list = pd.date_range(begindate, enddate, freq="14d")  # for 14 days of data
+    else:
+        date_list = pd.date_range(begindate, enddate, freq="2d")  # for 2 days of data
+
+    # Converting to UNIX timestamp
+    date_list_unix = []
+    for dt in date_list:
+        date_list_unix.append(int(time.mktime(dt.timetuple())))
+
+    # Reversing to get data from end date to start date
+    date_list_unix.reverse()
+    len_datelist = len(date_list_unix) - 1
+    print(date_list)
+    # Getting 2-data for one sensor at a time
+    for s in sensors_list:
+        # Adding sensor_index & API Key
+        hist_api_url = root_api_url + f"{s}/history/csv?api_key={key_read}"
+
+        # Creating start and end date api url
+        for i, d in enumerate(date_list_unix):
+            # Wait time
+            time.sleep(sleep_seconds)
+
+            if i < len_datelist:
+                print(
+                    "Downloading for PA: %s for Dates: %s and %s."
+                    % (
+                        s,
+                        datetime.fromtimestamp(date_list_unix[i + 1]),
+                        datetime.fromtimestamp(d),
+                    )
+                )
+                dates_api_url = (
+                    f"&start_timestamp={date_list_unix[i+1]}&end_timestamp={d}"
+                )
+
+                # Final API URL
+                api_url = hist_api_url + dates_api_url + average_api + fields_api_url
+
+                #
+                try:
+                    response = requests.get(api_url)
+                    print(response.status_code)
+                except:
+                    print(api_url)
+                #
+                try:
+                    assert response.status_code == requests.codes.ok
+
+                    # Creating a Pandas DataFrame
+                    df = pd.read_csv(StringIO(response.text), sep=",", header=0)
+
+                except AssertionError:
+                    df = pd.DataFrame()
+                    print("Bad URL!")
+
+                if df.empty:
+                    print("------------- No Data Available -------------")
+                else:
+                    # Adding Sensor Index/ID
+                    df["id"] = s
+
+                    #
+                    date_time_utc = []
+                    for index, row in df.iterrows():
+                        date_time_utc.append(datetime.fromtimestamp(row["time_stamp"]))
+                    df["date_time_utc"] = date_time_utc
+
+                    # Dropping duplicate rows
+                    df = df.drop_duplicates(subset=None, keep="first", inplace=False)
+
+                    # Writing to Postgres Table (Optional)
+                    # df.to_sql('tablename', con=engine, if_exists='append', index=False)
+
+                    # writing to csv file
+                    folderpath = "D:\\UTS"
+                    filename = folderpath + "\sensorsID_%s_%s_%s.csv" % (
+                        s,
+                        datetime.fromtimestamp(date_list_unix[i + 1]).strftime(
+                            "%m-%d-%Y"
+                        ),
+                        datetime.fromtimestamp(d).strftime("%m-%d-%Y"),
+                    )
+                    df.to_csv(filename, index=False, header=True)
+
+
+# Data download period
+bdate = "4-6-2019"
+edate = "4-6-2023"
+
+# Getting sensors list in Box domain [nwlng,, nwlat, selng, selat]
+location = "outdoor"  # or 'indoor' or 'both'
+sensors_list = get_sensorslist(150.823, -33.689, 151.374, -34.014, location, key_read)
+
+
+# Average_time. The desired average in minutes, one of the following: 0 (real-time),
+#                  10 (default if not specified), 30, 60, 360 (6 hour), 1440 (1 day)
+average_time = (
+    10  # or 10  or 0 (Current script is set only for real-time, 10, or 60 minutes data)
+)
+# print(sensors_list)
+# Getting PA data
+get_historicaldata(sensors_list, bdate, edate, average_time, key_read)
