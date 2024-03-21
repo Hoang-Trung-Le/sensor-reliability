@@ -1,0 +1,167 @@
+{
+    "api_version" : "V1.0.11-0.0.43",   "https://api.purpleair.com/"
+    "time_stamp" : 1682487615,
+    "data_time_stamp" : 1682487600,
+    "sensor" : {
+      "sensor_index" : 98477,
+      "last_modified" : 1647915201,
+      "date_created" : 1612207188,
+      "last_seen" : 1682487504,
+      "private" : 0,
+      "is_owner" : 0,
+      "name" : "NSW DPE PA2 AQMN 16",
+      "icon" : 0,
+      "location_type" : 0,
+      "model" : "PA-II-SD",
+      "hardware" : "2.0+OPENLOG+NO-DISK+DS3231+BME280+PMSX003-B+PMSX003-A",
+      "led_brightness" : 35,
+      "firmware_version" : "7.02",
+
+      "rssi" : -79,
+
+      "uptime" : 29146,
+
+      "pa_latency" : 641,   The time taken to send data to the PurpleAir servers in milliseconds.
+
+      "memory" : 16096,
+
+      "position_rating" : 5,
+
+      "latitude" : -33.85692,
+      "longitude" : 151.10475,
+      "altitude" : 38,
+
+
+      "channel_state" : 3,
+
+      ### Sensor status "https://community.purpleair.com/t/how-can-we-determine-if-when-one-of-the-sensors-is-downgraded-will-it-show-in-the-data-from-the-api-or-will-customer-service-reach-out-to-us-directly/3036"
+      0 = Normal. No channels are downgraded.
+      1 = The A channel is downgraded.
+      2 = The B channel is downgraded.
+      3 = Both the A and B channels are downgraded.
+     
+      "channel_flags" : 0,
+
+
+      "channel_flags_manual" : 0,
+      "channel_flags_auto" : 0,
+
+      "confidence" : 100,
+      "confidence_auto" : 100,
+      "confidence_manual" : 100,
+
+      ### Relative humidity inside of the sensor housing (%). On average, this is 4% lower than ambient conditions. Null if not equipped.
+      "humidity" : 49,   returns average for channel A and B.
+      "humidity_a" : 49,  returns channel A data.
+
+      ### Temperature inside of the sensor housing (F). On average, this is 8F higher than ambient conditions. Null if not equipped.
+      "temperature" : 78,   returns average for channel A and B.
+      "temperature_a" : 78,  returns channel A data.
+      
+      ### Current pressure in Millibars.
+      "pressure" : 1026.26,   returns average for channel A and B.
+      "pressure_a" : 1026.26,   returns channel A data.
+
+      "analog_input" : 0.04,  	If anything is connected to it, the analog voltage on ADC input of the PurpleAir sensor control board.
+
+      "pm1.0" : 0.0,
+      "pm1.0_a" : 0.0,
+      "pm1.0_b" : 0.0,
+      "pm2.5" : 0.5,      Estimated mass concentration PM2.5 (ug/m3). PM2.5 are fine particulates with a diameter of fewer than 2.5 microns.
+      "pm2.5_a" : 0.5,
+      "pm2.5_b" : 0.6,
+
+      ### The ALT Variant estimated mass concentration PM2.5 (ug/m3) is derived from the particle counts.
+      "pm2.5_alt" : 1.4,    returns average ALT variant for channel A and B but excluding downgraded channels.
+      "pm2.5_alt_a" : 1.3,
+      "pm2.5_alt_b" : 1.5,
+
+      "pm10.0" : 1.2,
+      "pm10.0_a" : 1.0,
+      "pm10.0_b" : 1.3,
+
+      ### Fine Particulate Light Scattering: The interaction of light with fine particulate matter causing the light to be redirected from its path. When looking at a scene, haze is partially due to light emanating from the scenic elements being scattered out of the sight path and random light (air light) being scattering into the sight path. See, "http://vista.cira.colostate.edu/Improve/visibility-basics/."
+
+      "scattering_coefficient" : 3.6,
+      "scattering_coefficient_a" : 3.0,
+      "scattering_coefficient_b" : 4.2,
+
+      ### A haze index related to light scattering and extinction that is approximately linearly related to human perception of the haze. See, "http://vista.cira.colostate.edu/Improve/visibility-basics/."
+      "deciviews" : 3.6,
+      "deciviews_a" : 3.1,
+      "deciviews_b" : 4.0,
+
+      ### Often referred to as visibility, visual range is the distance from the observer that a large dark object, e.g. a mountain top or large building, just disappears from view.
+      "visual_range" : 273.5,
+      "visual_range_a" : 286.8,
+      "visual_range_b" : 260.2,
+      
+      ### Count concentration (particles/100ml) of all particles greater than 0.3 µm diameter.
+      "0.3_um_count" : 238,
+      "0.3_um_count_a" : 200,
+      "0.3_um_count_b" : 277,
+
+      ### Count concentration (particles/100ml) of all particles greater than 0.5 µm diameter.
+      "0.5_um_count" : 69,
+      "0.5_um_count_a" : 59,
+      "0.5_um_count_b" : 79,
+
+      ### Count concentration (particles/100ml) of all particles greater than 1.0 µm diameter.
+      "1.0_um_count" : 17,
+      "1.0_um_count_a" : 18,
+      "1.0_um_count_b" : 17,
+
+      ### Count concentration (particles/100ml) of all particles greater than 2.5 µm diameter.
+      "2.5_um_count" : 2,
+      "2.5_um_count_a" : 2,
+      "2.5_um_count_b" : 2,
+
+      ### Count concentration (particles/100ml) of all particles greater than 5.0 µm diameter.
+      "5.0_um_count" : 0,
+      "5.0_um_count_a" : 0,
+      "5.0_um_count_b" : 0,
+
+      ### Count concentration (particles/100ml) of all particles greater than 10.0 µm diameter.
+      "10.0_um_count" : 0,
+      "10.0_um_count_a" : 0,
+      "10.0_um_count_b" : 0,
+
+      ### CF = calibration factor
+      "pm1.0_cf_1" : 0.0,   returns CF=1 variant average for channel A and B but excluding downgraded channels.
+      "pm1.0_cf_1_a" : 0.0,
+      "pm1.0_cf_1_b" : 0.0,
+
+      "pm1.0_atm" : 0.0,   returns ATM variant average for channel A and B but excluding downgraded channels.
+      "pm1.0_atm_a" : 0.0, 
+      "pm1.0_atm_b" : 0.0,
+
+      "pm2.5_atm" : 0.5,
+      "pm2.5_atm_a" : 0.49,
+      "pm2.5_atm_b" : 0.56,
+
+      "pm2.5_cf_1" : 0.5,
+      "pm2.5_cf_1_a" : 0.49,
+      "pm2.5_cf_1_b" : 0.56,
+
+      "pm10.0_atm" : 1.2,
+      "pm10.0_atm_a" : 1.02,
+      "pm10.0_atm_b" : 1.31,
+      "pm10.0_cf_1" : 1.2,
+      "pm10.0_cf_1_a" : 1.02,
+      "pm10.0_cf_1_b" : 1.31,
+
+
+      "primary_id_a" : 1294722,             ThingSpeak channel ID for storing sensor values
+      "primary_key_a" : "P8CYQ5CLH9UN7B5B", ThingSpeak read key used for accessing data for the channel
+      "primary_id_b" : 1294724,
+      "primary_key_b" : "KMRJQCCV6UTJCN0Y",
+      "secondary_id_a" : 1294723,           ThingSpeak channel ID for storing sensor values
+      "secondary_key_a" : "1GLERI8NDENVEL9I", ThingSpeak read key used for accessing data for the channel
+      "secondary_id_b" : 1294725,
+      "secondary_key_b" : "CRBBAHB8YJAVKSXF",
+
+      "stats" : {"pm2.5" : 0.5, "pm2.5_10minute" : 0.6, "pm2.5_30minute" : 0.8, "pm2.5_60minute" : 1.9, "pm2.5_6hour" : 5.2, "pm2.5_24hour" : 5.6, "pm2.5_1week" : 4.2, "time_stamp" : 1682487504}, The servers UTC (Unix) time stamp from when data was received for this channel.
+      "stats_a" : {"pm2.5" : 0.5, "pm2.5_10minute" : 0.5, "pm2.5_30minute" : 0.7, "pm2.5_60minute" : 1.8, "pm2.5_6hour" : 5.0, "pm2.5_24hour" : 5.3, "pm2.5_1week" : 4.0, "time_stamp" : 1682487504},
+      "stats_b" : {"pm2.5" : 0.6, "pm2.5_10minute" : 0.6, "pm2.5_30minute" : 0.9, "pm2.5_60minute" : 2.0, "pm2.5_6hour" : 5.4, "pm2.5_24hour" : 5.9, "pm2.5_1week" : 4.5, "time_stamp" : 1682487504}
+    }
+  }

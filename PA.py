@@ -6,7 +6,7 @@ import json
 from io import StringIO
 
 
-print("Hello!")
+# print("Hello!")
 
 # API Keys provided by PurpleAir(c)
 key_read = "D80F3AFD-DDAD-11ED-BD21-42010A800008"
