@@ -7,7 +7,9 @@ class DempsterShafer:
     This class provides methods to calculate Dempster's rule
     """
 
-    def __init__(self, sampling_matrix=None, feature_matrix=None):
+    def __init__(
+        self, sampling_matrix: np.array = None, feature_matrix: np.array = None
+    ):
         if sampling_matrix is not None and feature_matrix is not None:
             self.sampling_matrix = sampling_matrix
             self.feature_matrix = feature_matrix
