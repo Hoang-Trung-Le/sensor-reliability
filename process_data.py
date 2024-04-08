@@ -29,8 +29,8 @@ class DataProcessor:
 
             # Display the resulting DataFrame
             # print(result_df)
-
-            file_data[csv_file] = result_df  # Save result_df into the dictionary
+            csv_file_name = csv_file.split(".")[0]
+            file_data[csv_file_name] = result_df  # Save result_df into the dictionary
 
         # print(csv_file_path)
         return file_data  # Return the dictionary containing the result_df of each file

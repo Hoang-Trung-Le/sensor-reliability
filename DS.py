@@ -30,6 +30,8 @@ class DempsterShafer:
             # Length of hypothesis is equal to the number of rows of feature_matrix
             self.hypotheses = hypothesis
         else:
+            print("Number of hypothesis: ", len(hypothesis))
+            print("Rows in feature matrix: ", self.feature_matrix.shape[0] + 1)
             print(
                 "List of hypotheses does not align to the number of rows of feature matrix"
             )

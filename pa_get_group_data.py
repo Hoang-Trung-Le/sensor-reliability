@@ -15,7 +15,8 @@ Modified Wed Feb 15 17:00:00 2023
 
 import requests
 import pandas as pd
-from datetime import datetime
+import numpy as np
+from datetime import datetime, timezone
 import time
 import json
 import os
@@ -198,39 +199,51 @@ def get_historicaldata(sensors_list, bdate, edate, average_time, field_list, key
             print("------------- No Data Available -------------")
         else:
             # Adding Sensor Index/ID
-            df["id"] = s
+            # df["id"] = s
 
             #
             date_time_utc = []
             for index, row in df.iterrows():
-                date_time_utc.append(datetime.utcfromtimestamp(row["time_stamp"]))
+                date_time_utc.append(
+                    datetime.fromtimestamp(row["time_stamp"], tz = timezone.utc)
+                )
             df["date_time_utc"] = date_time_utc
 
             # Dropping duplicate rows
             df = df.drop_duplicates(subset=None, keep="first", inplace=False)
             df = df.sort_values(by=["time_stamp"], ascending=True, ignore_index=True)
+            # Columns to round up
+            columns_to_round_up = [ "pm1.0_atm", "pm2.5_alt", "pm10.0_atm"]
+            # Round up the values in the specified columns
+            df[columns_to_round_up] = np.round(df[columns_to_round_up], 3)
 
             # Writing to Postgres Table (Optional)
             # df.to_sql('tablename', con=engine, if_exists='append', index=False)
 
             # writing to csv file
             today = datetime.now().strftime("%Y%m%d")
-            folderpathdir = fr"D:\UTS\OneDrive - UTS\HDR\Papers\Dependability\Coding\sensor-reliability\data\{today}"
+            # folderpathdir = rf"D:\UTS\OneDrive - UTS\HDR\Papers\Dependability\Coding\sensor-reliability\data\{today}\raw"
+            folderpathdir = rf"data\{today}\raw"
             if not os.path.exists(folderpathdir):
                 os.makedirs(folderpathdir)
 
-            filename = folderpathdir + fr"\{today}_UTS{i+1}.csv"
-            df.to_csv(filename, index=False, header=True)
+            filename = folderpathdir + rf"\{today}_UTS{i+1}.csv"
+            # Check if the file already exists
+            if os.path.exists(filename):
+                # Append the DataFrame to the existing CSV file without writing the header
+                df.to_csv(filename, mode='a', index=False, header=False)
+            else:
+                # Write the DataFrame to a new CSV file with the header
+                df.to_csv(filename, index=False, header=True)
 
 
 # Getting PA data
-fields = field_list
+fields = parameter_headers
 print(fields)
 # Data download period. Enter Start and end Dates
-bdate = "19-03-2024 16:30:00"
-edate = "19-03-2024 16:50:00"
+bdate = "08-04-2024 02:00:00"
+edate = "08-04-2024 03:30:00"
 
 folderlist = get_historicaldata(
     sensor_ids, bdate, edate, average_time, fields, key_read
 )
-
