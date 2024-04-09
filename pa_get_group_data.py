@@ -216,7 +216,9 @@ def get_historicaldata(sensors_list, bdate, edate, average_time, field_list, key
             columns_to_round_up = [ "pm1.0_atm", "pm2.5_alt", "pm10.0_atm"]
             # Round up the values in the specified columns
             df[columns_to_round_up] = np.round(df[columns_to_round_up], 3)
-
+            # Convert temperature column from Fahrenheit to Celsius
+            df['temperature'] = (df['temperature'] - 32) * 5/9
+            df['temperature'] = np.round(df['temperature'], 1)
             # Writing to Postgres Table (Optional)
             # df.to_sql('tablename', con=engine, if_exists='append', index=False)
 
